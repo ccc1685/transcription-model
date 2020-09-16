@@ -6,6 +6,7 @@ include("chicorrburstcond.jl")  # Gillespie simulator for correlations
 
 using Distributions
 using StatsBase
+using DelimitedFiles
 
 samples = 10   # Number of mcmc steps
 scheme = 1    # 0 uses closed form LC computation, 1 uses Gillespie simulator
@@ -35,14 +36,14 @@ temp = [1.;1.] # Temperature for mcmc
 r = readdlm("rateparamsG3R2.txt",',')  #Input initial condition for parameters
 
 # Four Live Cell data sets
-dataLC = Array{Array{Float64,2},1}(4)
+dataLC = Array{Array{Float64,2},1}(undef,4)
 dataLC[1] = readdlm("dataLCMEM.txt",',')
 dataLC[2] = readdlm("dataLCdeletion.txt",',')
 dataLC[3] = readdlm("dataLCdose.05.txt",',')
 dataLC[4] = readdlm("dataLCdose.5.txt",',')
 
 # Three smFISH data sets
-dataFISH = Array{Array{Int,2},1}(3)
+dataFISH = Array{Array{Int,2},1}(undef,3)
 dataFISH[1] = readdlm("dataFISHdose0.txt")
 dataFISH[2] = readdlm("dataFISHdose.05.txt")
 dataFISH[3] = readdlm("dataFISHdose.5.txt")

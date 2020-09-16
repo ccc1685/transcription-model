@@ -11,9 +11,9 @@ function chicorr(nalleles::Int,n::Int,zet::Int,rin::Vector,nbursts::Int)
   start0 = ones(Int,nalleles)
 
   bursts = zeros(Int,nexps,nalleles)
-  gfprow = Array{Int,1}(nalleles)
-  times = Array{Float64,1}(nsteps)
-  gfp = Array{Int,2}(nsteps,nalleles)
+  gfprow = Array{Int,1}(undef,nalleles)
+  times = Array{Float64,1}(undef,nsteps)
+  gfp = Array{Int,2}(undef,nsteps,nalleles)
 
   total = 854 # ~ 14 hours
 
@@ -218,7 +218,7 @@ function chicorr(nalleles::Int,n::Int,zet::Int,rin::Vector,nbursts::Int)
       avg += sum(G.*dt)*(nactive-1)
     end
     # ibursts = sum(sum(bursts.>0,2).>1)
-    ibursts += length(find(bursts[iexps,:])) > 1
+    ibursts += length(findall(bursts[iexps,:] .> 0)) > 1
     iexps += 1
   end #while ibursts < nbursts && iexps < nexps
   # println("corr:",ibursts)
@@ -237,7 +237,7 @@ function chicorr(nalleles::Int,n::Int,zet::Int,rin::Vector,nbursts::Int)
       cc = -10.
   end
 
-  cb = Array{Float64}(nexps)
+  cb = Array{Float64}(undef,nexps)
 
   nalleles = size(bursts)[2]
 
@@ -301,7 +301,7 @@ function telegraphcorr(n::Int,zet::Int,r::Vector,state::Vector,nalleles::Int)
 	# Initialize rates
 	gammaf = zeros(n+1)
 	gammab = zeros(n+1)
-	nu = Array{Float64,1}(zet+1)
+	nu = Array{Float64,1}(undef,zet+1)
 
 	# assign gene rates
 	for i = 1:n
@@ -328,13 +328,13 @@ function telegraphcorr(n::Int,zet::Int,r::Vector,state::Vector,nalleles::Int)
 	# state = copy(state0)
 
 	# pre-mRNA states
-	z = Array{Array{Int,1},1}(nalleles)
+	z = Array{Array{Int,1},1}(undef,nalleles)
 
 	# initialize propensities
-	af = Array{Float64,1}(nalleles)
-	ab = Array{Float64,1}(nalleles)
-	apre1 = Array{Float64,1}(nalleles)
-	az = Array{Array{Float64,1}}(nalleles)
+	af = Array{Float64,1}(undef,nalleles)
+	ab = Array{Float64,1}(undef,nalleles)
+	apre1 = Array{Float64,1}(undef,nalleles)
+	az = Array{Array{Float64,1}}(undef,nalleles)
 
 	apremid = zeros(nalleles)     # sum(az[2:zet]) middle pre-mRNAstep
 	afree = zeros(nalleles)       # az[zet+1]  create free mRNA

@@ -54,7 +54,7 @@ function telegraphprefast(range::Array,n::Int,zeta::Int,rin::Vector,total::Int,n
 	# Initialize rates
 	gammaf = zeros(n+1)
 	gammab = zeros(n+1)
-	nu = Array{Float64,1}(zeta+1)
+	nu = Array{Float64,1}(undef,zeta+1)
 
 	# assign gene rates
 	for i = 1:n
@@ -87,13 +87,13 @@ function telegraphprefast(range::Array,n::Int,zeta::Int,rin::Vector,total::Int,n
 	# nindex = n + 1
 
 	# pre-mRNA states
-	z = Array{Array{Int,1},1}(nalleles)
+	z = Array{Array{Int,1},1}(undef,nalleles)
 
 	# initialize propensities
-	af = Array{Float64,1}(nalleles)
-	ab = Array{Float64,1}(nalleles)
-	apre1 = Array{Float64,1}(nalleles)
-	az = Array{Array{Float64,1},1}(nalleles)
+	af = Array{Float64,1}(undef,nalleles)
+	ab = Array{Float64,1}(undef,nalleles)
+	apre1 = Array{Float64,1}(undef,nalleles)
+	az = Array{Array{Float64,1},1}(undef,nalleles)
 
 	apremid = zeros(nalleles)     # sum(az[2:zeta]) middle pre-mRNAstep
 	afree = zeros(nalleles)       # az[zeta+1]  create free mRNA
@@ -357,7 +357,7 @@ function telegraphprefast(n::Int,zeta::Int,rin::Vector,total::Int,tmax::Float64,
 	# Initialize rates
 	gammaf = zeros(n+1)
 	gammab = zeros(n+1)
-	nu = Array{Float64,1}(zeta+1)
+	nu = Array{Float64,1}(undef,zeta+1)
 
 	# assign gene rates
 	for i = 1:n
@@ -390,13 +390,13 @@ function telegraphprefast(n::Int,zeta::Int,rin::Vector,total::Int,tmax::Float64,
 	# nindex = n + 1
 
 	# pre-mRNA states
-	z = Array{Array{Int,1},1}(nalleles)
+	z = Array{Array{Int,1},1}(undef,nalleles)
 
 	# initialize propensities
-	af = Array{Float64,1}(nalleles)
-	ab = Array{Float64,1}(nalleles)
-	apre1 = Array{Float64,1}(nalleles)
-	az = Array{Array{Float64,1},1}(nalleles)
+	af = Array{Float64,1}(undef,nalleles)
+	ab = Array{Float64,1}(undef,nalleles)
+	apre1 = Array{Float64,1}(undef,nalleles)
+	az = Array{Array{Float64,1},1}(undef,nalleles)
 
 	apremid = zeros(nalleles)     # sum(az[2:zeta]) middle pre-mRNAstep
 	afree = zeros(nalleles)       # az[zeta+1]  create free mRNA
@@ -952,13 +952,13 @@ function telegraphmdt(range::Array,n::Int,zeta::Int,rin::Vector,total::Int,nburs
 	# nindex = n + 1
 
 	# pre-mRNA states
-	z = Array{Array{Int,1},1}(nalleles)
+	z = Array{Array{Int,1},1}(undef,nalleles)
 
 	# initialize propensities
-	af = Array{Float64,1}(nalleles)
-	ab = Array{Float64,1}(nalleles)
-	apre1 = Array{Float64,1}(nalleles)
-	az = Array{Array{Float64,1},1}(nalleles)
+	af = Array{Float64,1}(undef,nalleles)
+	ab = Array{Float64,1}(undef,nalleles)
+	apre1 = Array{Float64,1}(undef,nalleles)
+	az = Array{Array{Float64,1},1}(undef,nalleles)
 
 	apremid = zeros(nalleles)     # sum(az[2:zeta]) middle pre-mRNAstep
 	afree = zeros(nalleles)       # az[zeta+1]  create free mRNA

@@ -62,9 +62,9 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
 
     if nFISH > 0
         # Declare FISH variables and prepare FISH histograms
-        nhist = Array{Int}(nFISH)
-        histFISH = Array{Array{Float64,1},1}(nFISH)
-        countsFISH =Array{Int}(nFISH)
+        nhist = Array{Int}(undef,nFISH)
+        histFISH = Array{Array{Float64,1},1}(undef,nFISH)
+        countsFISH =Array{Int}(undef,nFISH)
 
         for i = 1:nFISH
             nhist[i] = length(dataFISH[i][:,1])
@@ -82,8 +82,8 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
 
         nCDF2 = div(nCDF,2)
 
-        cdfON = Array{Array{Float64,1}}(nLC)
-        cdfOFF = Array{Array{Float64,1}}(nLC)
+        cdfON = Array{Array{Float64,1}}(undef,nLC)
+        cdfOFF = Array{Array{Float64,1}}(undef,nLC)
         countsON = zeros(Int,nLC)
         countsOFF = zeros(Int,nLC)
         for kd = 1:nLC
@@ -144,8 +144,8 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
     chiLCml = chiLC
 
     # Declare output variables
-    chiout = Array{Float64}(totalmcmc+1)
-    rout = Array{Array}(totalmcmc+1)
+    chiout = Array{Float64}(undef,totalmcmc+1)
+    rout = Array{Array}(undef,totalmcmc+1)
     chiout[1] = chi
     rout[1] = r
 
@@ -155,16 +155,16 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
     for step = 1:totalmcmc
 
         if step == Int(div(totalmcmc,2))
-            println("Halfway: ",now())
+            println("Halfway: ",time())
         end
 
         MHfactor = 1.
 
         # Select fixed effects parameters
         for i in fixedeffects
-            d = Distributions.TruncatedNormal(r[i,1],pc*min(r[i,1],upperbound[i]),lowerbound[i],upperbound[i])
-            rt[i,:] = repmat([rand(d)],1,totalsets)
-            dt = Distributions.TruncatedNormal(rt[i,1],pc*min(rt[i,1],upperbound[i]),lowerbound[i],upperbound[i])
+            d = Distributions.truncated(Normal(r[i,1],pc*min(r[i,1],upperbound[i])),lowerbound[i],upperbound[i])
+            rt[i,:] = repeat([rand(d)],1,totalsets)
+            dt = Distributions.truncated(Normal(rt[i,1],pc*min(rt[i,1],upperbound[i])),lowerbound[i],upperbound[i])
             # Compute MH nonsymmetric proposal distribution factor
             MHfactor *= Distributions.pdf(dt,r[i,1])/Distributions.pdf(d,rt[i,1])
         end
@@ -172,8 +172,8 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
         # Select random effects parameters
         for k = 1:ndoses
             for j in randomeffects
-                d = Distributions.TruncatedNormal(r[j,doseset[k][1]],pc*min(r[j,doseset[k][1]],1),lowerbound[j],upperbound[j])
-                rt[j,doseset[k]] = rand(d)
+                d = Distributions.truncated(Normal(r[j,doseset[k][1]],pc*min(r[j,doseset[k][1]],1)),lowerbound[j],upperbound[j])
+                rt[j,doseset[k]] .= rand(d)
             end
         end
 
@@ -222,9 +222,9 @@ function mcmc(dataLC::Array{Array{Float64,2},1},dataFISH::Array{Array{Int,2},1},
         r975[1,j,k] = quantile(rarray[:,j,k],0.975)
     end
 
-    rmean = mean(rarray,1)
-    rstd = std(rarray,1)
-    rmedian = median(rarray,1)
+    rmean = mean(rarray,dims=1)
+    rstd = std(rarray,dims=1)
+    rmedian = median(rarray,dims=1)
 
     return rml, [chiml mean(chiout) std(chiout) chiLCml chiFml], chiout, [rmean;rstd], [n zeta],[rmedian;r025;r975], rout[end]
 
@@ -258,8 +258,8 @@ function costFISH(FISHsets::Array{Int,1},histFISH::Array{Array{Float64,1},1},nhi
     for i in eachindex(nhist)
         ir = FISHsets[i]
         histF = @fastmath telegraphprefast(n,zet,rt[:,ir],totalf,tmax,nhist[i],nallelesf,false)
-        varF = kT*max.(histF.*(1-histF),lbvar)/countsFISH[i]*nhist[i]
-        chiFs += sum((histFISH[i][index0:end]-histF[index0:end]).^2./varF[index0:end])
+        varF = kT*max.(histF.*(1 .- histF),lbvar)/countsFISH[i]*nhist[i]
+        chiFs += sum((histFISH[i][index0:end]-histF[index0:end]) .^2 ./ varF[index0:end])
     end
     return chiFs
 end
